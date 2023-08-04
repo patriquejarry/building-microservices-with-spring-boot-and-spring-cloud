@@ -1,0 +1,282 @@
+
+https://www.udemy.com/course/building-microservices-with-spring-boot-and-spring-cloud/learn/lecture/34335926?start=0#overview
+https://github.com/RameshMF/springboot-microservices
+https://start.spring.io/
+docker run -d --rm --name mysql-container -e MYSQL_ROOT_PASSWORD=root mysql --default-authentication-plugin=mysql_native_password --innodb_use_native_aio=0
+http://localhost:8080/swagger-ui/index.html
+http://localhost:8080/v3/api-docs
+docker run -d --rm --name rabbitmq-container -it -p 5672:5672 rabbitmq:3.11
+
+http://localhost:8761
+
+http://localhost:8080/swagger-ui/index.html
+http://localhost:8080/v3/api-docs
+
+
+Start service-registry and config-server services and then start the department-service.
+Follow the order to the services:
+service-registry
+config-server
+department-service
+employee-service
+api-gateway
+organization-service
+react-frontend
+
+
+#Actuator
+###########################################################################
+
+- http://localhost:8080/actuator
+Global end point of actuator
+All endpoints are not enabled by default. You can enable all endpoints by adding this property in application.properties file:
+	management.endpoints.web.exposure.include=*
+
+- http://localhost:8080/actuator/info
+If you added any information about the application in application.properties then we can view it using /info endpoint.
+
+- http://localhost:8080/actuator/health
+The /health endpoint shows the health of the application, including the disk space, databases and more.
+
+- http://localhost:8080/actuator/beans
+The /beans endpoint shows all the beans registered in your application, including the beans you explicitly configured and those auto configured by Spring Boot.
+
+- http://localhost:8080/actuator/conditions
+The /conditions endpoint shows the auto configuration report, categorised into pasitiveMatches and negativeMatches.
+
+- http://localhost:8080/actuator/mappings
+The /mappings endpoint shows all the @RequestMapping paths declared in the application.
+This is very helpful for checking which request path will be handled by which controller method.
+
+- http://localhost:8080/actuator/configprops
+The /configprops endpoint offers all the configuration properties defined by @ConfigurationProperties bean,
+including your configuration properties defined in the application.properties or YAML files.
+
+- http://localhost:8080/actuator/metrics
+The /metrics endpoint shows various metrics about the current application such as how much memory it is using, 
+how much memory is free, the size of the heap used, the number of threads used, and so on.
+
+- http://localhost:8080/actuator/env
+The /env endpoint exposes all the properties from the Spring’s ConfigurableEnvironment interface, 
+such as a list of active profiles, application properties, system environment variables and so on.
+
+- http://localhost:8080/actuator/threaddump
+Using /threaddumb endpoint, you can view your application’s thread dumb with running threads details and JVM stack trace.
+
+- http://localhost:8080/actuator/loggers
+The /loggers endpoint allows you to view and configure the log levels of your application at runtime.
+	You can also view the logging level of the specific logger:
+	http://localhost:8080/actuator/loggers/{name}
+	Ex: http://localhost:8080/actuator/loggers/net.javaguides.springboot
+	
+	You can update the logging level of the logger at a runtime by sending a POST request to URL: http://localhost:8080/actuator/loggers/{name}
+	Ex: http://localhost:8080/actuator/loggers/net.javaguides.springboot
+	{
+		"configuredLevel": "DEBUG"
+	}
+
+- http://localhost:8080/actuator/shutdown
+The /shutdown endpoint can be used to gracefully shut down the application.
+This endpoint not enabled by default. You can enable this endpoint by adding this property in application.properties file:
+	management.endpoint.shutdown.enabled=true
+
+
+#Ports Mapping
+###########################################################################
+
+App name : DEPARTMENT-SERVICE - Port : 8080
+App name : EMPLOYEE-SERVICE - Port : 8081
+App name : ORGANIZATION-SERVICE - Port : 8082
+
+App name : API-GATEWAY - Port : 9191
+App name : CONFIG-SERVER - Port : 8888
+App name : SERVICE-REGISTRY - Port : 8761
+
+App name : REACT-FRONTEND - Port : 3000
+Zipkin Server - Port : 9411
+
+
+#Important Note
+###########################################################################
+
+This project supports the Latest Spring Boot 3 and Spring Cloud 2022.0.0.
+Though this project was created using Spring boot 2.7.4, 
+this course perfectly works for Spring Boot 3 and Spring cloud 2022.0.0 with very minimal changes (I provided the steps to change).
+GitHub repository for Spring Boot 2.7.4 - https://github.com/RameshMF/springboot-microservices/tree/main/springboot-microservices
+GitHub repository for Spring Boot 3     - https://github.com/RameshMF/springboot-microservices/tree/main/v3/springboot-microservices
+
+Conclusion:
+This project supports both Spring Boot 2 and Spring Boot 3 users.
+
+
+https://spring.io/projects/spring-cloud-circuitbreaker
+
+https://resilience4j.readme.io/
+
+https://resilience4j.readme.io/docs/circuitbreaker
+
+https://resilience4j.readme.io/docs/retry
+
+
+
+# Front-End with React
+###########################################################################
+
+Install nodeJS and Visual Studio Code
+
+https://create-react-app.dev/
+
+my-app=react-frontend
+
+new terminal
+npx create-react-app <my-app>
+cd <my-app>
+npm start
+
+new terminal
+npm install bootstrap --save
+npm install axios --save
+
+src/index.js -> import 'bootstrap/dist/css/bootstrap.min.js';
+
+src/app.js -> <EmployeeComponent />
+
+src/service/EmployeeService.js
+import axios from 'axios'
+
+const EMPLOYEE_SERVICE_BASE_URL = "http://localhost:9191/api/employees";
+const EMPLOYEE_ID = 1;
+
+classe EmployeeService{
+
+	getEmployee(){
+		return axios.get(EMPLOYEE_SERVICE_BASE_URL + '/' + EMPLOYEE_ID);
+	}
+}
+
+export default new EmployeeService;
+
+
+src/component/EmployeeComponent.js
+import React, { Component } from 'react';
+
+class EmployeeComponent extends Component {
+
+	constructor(props) {
+		super(props);
+
+		this.state = {
+			employee: {},
+			department: {},
+			organization: {}
+		}
+	}
+
+	componentDidMount() {
+
+		EmployeeService.getEmployee().then((response) => {
+			this.setState({employee : response.data.employee});
+			this.setState({department : response.data.department});
+			this.setState({organization : response.data.organization});
+			
+			console.log(this.state);
+			console.log(this.state.employee);
+			console.log(this.state.department);
+			console.log(this.state.organization);
+		});
+	}
+
+
+	render() {
+	
+		return (
+		
+			<div>
+			
+			</div>
+		);
+	}
+}
+
+
+# Docker
+###########################################################################
+
+# Network
+docker network create springboot-microservices-network
+docker network ls
+
+# Mysql
+docker pull mysql
+docker images
+
+docker run --name springboot-microservices-mysql-container-docker --network springboot-microservices-network -e MYSQL_ROOT_PASSWORD=root -e MYSQL_DATABASE=employee_management -d mysql
+docker ps -a
+
+docker exec -it springboot-microservices-mysql-container-docker bash
+bashX.X#mysql -u root -p
+
+
+# Department-Service
+docker build -t springboot-microservices-department-service .
+docker images
+
+docker run --name springboot-microservices-department-service-container-docker --network springboot-microservices-network -p 8080:8080 -d springboot-microservices-department-service
+docker ps -a
+
+
+# Kafka
+###########################################################################
+
+STEP 1: DOWNLOAD AND INSTALL
+	https://kafka.apache.org/ 
+	https://kafka.apache.org/downloads
+	https://dlcdn.apache.org/kafka/3.2.0/kafka_2.13-3.2.0.tgz
+
+STEP 2: START THE KAFKA ENVIRONMENT
+
+	# Start the ZooKeeper service
+	C:\Users\RAMESH\Downloads\kafka>.\bin\windows\zookeeper-server-start.bat .\config\zookeeper.properties
+	D:\Development\kafka_2.13-3.4.0>.\\bin\\windows\\zookeeper-server-start.bat .\\config\\zookeeper.properties
+
+	# Start the Kafka broker service
+	C:\Users\RAMESH\Downloads\kafka>.\bin\windows\kafka-server-start.bat .\config\server.properties
+	D:\Development\kafka_2.13-3.4.0>.\\bin\\windows\\kafka-server-start.bat .\\config\\server.properties
+
+STEP 3: CREATE A TOPIC TO STORE YOUR EVENTS
+	C:\Users\RAMESH\Downloads\kafka>.\bin\windows\kafka-topics.bat --create --topic topic_demo --bootstrap-server localhost:9092
+	D:\Development\kafka_2.13-3.4.0>.\\bin\\windows\\kafka-topics.bat --create --topic topic_demo --bootstrap-server localhost:9092
+
+STEP 4: WRITE SOME EVENTS INTO THE TOPIC
+	C:\Users\RAMESH\Downloads\kafka>.\\bin\\windows\\kafka-console-producer.bat --topic topic_demo --bootstrap-server localhost:9092
+	D:\Development\kafka_2.13-3.4.0>.\\bin\\windows\\kafka-console-producer.bat --topic topic_demo --bootstrap-server localhost:9092
+	>hello world
+	>topic demo
+
+STEP 5:  READ THE EVENTS
+	https://www.conduktor.io/kafka/kafka-consumer-cli-tutorial/
+	C:\Users\RAMESH\Downloads\kafka>.\\bin\\windows\\kafka-console-consumer.bat --topic topic_demo --from-beginning --bootstrap-server localhost:9092
+	D:\Development\kafka_2.13-3.4.0>.\\bin\\windows\\kafka-console-consumer.bat --topic topic_demo --from-beginning --bootstrap-server localhost:9092
+	hello world
+	topic demo
+
+	C:\Users\RAMESH\Downloads\kafka>.\bin\windows\kafka-console-consumer.bat --from-beginning --bootstrap-server localhost:9092 --topic javaguides
+	C:\Users\RAMESH\Downloads\kafka>.\bin\windows\kafka-console-consumer.bat --from-beginning --bootstrap-server localhost:9092 --topic javaguides_json
+	C:\Users\RAMESH\Downloads\kafka>.\bin\windows\kafka-console-consumer.bat --from-beginning --bootstrap-server localhost:9092 --topic wikimedia_recentchange
+
+
+# Kafka Real World
+###########################################################################
+
+https://stream.wikimedia.org/v2/stream/recentchange
+https://esjewett.github.io/wm-eventsource-demo/
+https://codepen.io/Krinkle/pen/BwEKgW?editors=1010
+
+Client -> Kafka Producer -> Kafka Broker -> Kafka Consumer -> DB
+
+
+# Learn RabbitMQ with Spring Boot
+###########################################################################
+
+docker run --name rabbitmq-mgmt-container -it -p 15672:15672 -p 5672:5672 rabbitmq:3.12.2-management
+

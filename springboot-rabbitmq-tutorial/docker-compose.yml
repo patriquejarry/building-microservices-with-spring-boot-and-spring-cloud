@@ -1,0 +1,10 @@
+version: "3.8"
+
+services:
+  springboot-rabbitmq-tutorial_rabbitmq:
+    container_name: springboot-rabbitmq-tutorial_rabbitmq-container
+    image: rabbitmq:3.12.2-management
+    #restart: unless-stopped
+    ports:
+      - "5672:5672"
+      - "15672:15672"
